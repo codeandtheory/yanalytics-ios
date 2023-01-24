@@ -1,10 +1,16 @@
-# Y—Analytics
+![Y—Analytics](https://user-images.githubusercontent.com/1037520/214347556-2c63320d-e348-4fad-8762-6ff7d7a6b869.jpeg)
 _An injectable analytics wrapper for Apple platforms._
+
+This lightweight framework provides a generic wrapper for analytics SDK's that is suitable for Dependency Injection. Its objective is to avoid tightly coupling an application with a specific analytics provider.
+
+Licensing
+----------
+Y—Analytics is licensed under the [Apache 2.0 license](LICENSE).
 
 Documentation
 ----------
 
-Documentation is automatically generated from source code comments and rendered as a static website hosted via GitHub Pages at:  https://yml-org.github.io/yanalytics-ios/
+Documentation is automatically generated from source code comments and rendered as a static website hosted via GitHub Pages at: https://yml-org.github.io/yanalytics-ios/
 
 Usage
 ----------

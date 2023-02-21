@@ -10,36 +10,27 @@ import XCTest
 @testable import YAnalytics
 
 final class LoggerAnalyticsEngineTests: XCTestCase {
-    private var data: MockAnalyticsData!
-    private var sut: AnalyticsEngine!
-    private var logger: LoggerAnalyticsEngine!
-    private var mock: MockAnalyticsEngine!
+    func testTrack() {
+        // Given
+        let sut = makeSUT()
+        let data = MockAnalyticsData()
 
-    override func setUp() {
-        super.setUp()
-        data = MockAnalyticsData()
-        mock = MockAnalyticsEngine()
-        logger = LoggerAnalyticsEngine()
-        sut = CompoundAnalyticsEngine(engines: [logger, mock])
-    }
+        XCTAssert(sut.mock.allEvents.isEmpty)
 
-    override func tearDown() {
-        super.tearDown()
-        data = nil
-        mock = nil
-        logger = nil
-        sut = nil
-    }
-
-    func testLogging() {
-        XCTAssert(mock.screenViews.isEmpty)
-        XCTAssert(mock.userProperties.isEmpty)
-        XCTAssert(mock.events.isEmpty)
-
+        // When
         data.allEvents.forEach { sut.track(event: $0) }
 
-        XCTAssertEqual(mock.screenViews.count, data.screens.count)
-        XCTAssertEqual(mock.userProperties.count, data.userProperties.count - 1) // there's 1 repeat user property
-        XCTAssertEqual(mock.events.count, data.events.count)
+        // Then
+        XCTAssertLogged(engine: sut, data: data)
+    }
+}
+
+extension LoggerAnalyticsEngineTests {
+    func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> SpyAnalyticsEngine {
+        let engine = LoggerAnalyticsEngine()
+        let sut = SpyAnalyticsEngine(engine: engine)
+        trackForMemoryLeak(engine, file: file, line: line)
+        trackForMemoryLeak(sut, file: file, line: line)
+        return sut
     }
 }

@@ -10,57 +10,34 @@ import XCTest
 @testable import YAnalytics
 
 final class CompoundAnalyticsEngineTests: XCTestCase {
-    private var sut: CompoundAnalyticsEngine!
-    private var mock1: MockAnalyticsEngine!
-    private var mock2: MockAnalyticsEngine!
-    private var data: MockAnalyticsData!
+    func testTrack() throws {
+        // Given
+        let sut = makeSUT()
+        let mock1 = try XCTUnwrap(sut.engines[0] as? MockAnalyticsEngine)
+        let mock2 = try XCTUnwrap(sut.engines[1] as? MockAnalyticsEngine)
+        let data = MockAnalyticsData()
+        let events = data.allEvents
 
-    override func setUp() {
-        super.setUp()
-        
-        mock1 = MockAnalyticsEngine()
-        mock2 = MockAnalyticsEngine()
-        sut = CompoundAnalyticsEngine(engines: [mock1, mock2])
-        data = MockAnalyticsData()
+        XCTAssert(mock1.allEvents.isEmpty)
+        XCTAssert(mock2.allEvents.isEmpty)
+
+        // When
+        events.forEach { sut.track(event: $0) }
+
+        // Then
+        XCTAssertLogged(engine: mock1, data: data)
+        XCTAssertLogged(engine: mock2, data: data)
     }
+}
 
-    override func tearDown() {
-        super.tearDown()
-        mock1 = nil
-        mock2 = nil
-        sut = nil
-        data = nil
-    }
-
-    func testTrack() {
-        XCTAssert(mock1.screenViews.isEmpty)
-        XCTAssert(mock2.screenViews.isEmpty)
-        XCTAssert(mock1.userProperties.isEmpty)
-        XCTAssert(mock2.userProperties.isEmpty)
-        XCTAssert(mock1.events.isEmpty)
-        XCTAssert(mock2.events.isEmpty)
-
-        data.allEvents.forEach { sut.track(event: $0) }
-        
-        XCTAssertFalse(mock1.screenViews.isEmpty)
-        XCTAssertFalse(mock2.screenViews.isEmpty)
-        XCTAssertFalse(mock1.userProperties.isEmpty)
-        XCTAssertFalse(mock2.userProperties.isEmpty)
-        XCTAssertFalse(mock1.events.isEmpty)
-        XCTAssertFalse(mock2.events.isEmpty)
-        
-        data.allEvents.forEach {
-            switch $0 {
-            case .screenView(screenName: let screenName):
-                XCTAssert(mock1.screenViews.contains(screenName))
-                XCTAssert(mock2.screenViews.contains(screenName))
-            case .userProperty(name: let name, value: _):
-                XCTAssertNotNil(mock1.userProperties[name])
-                XCTAssertNotNil(mock2.userProperties[name])
-            case .event(name: let name, parameters: _):
-                XCTAssert(mock1.events.keys.contains(name))
-                XCTAssert(mock2.events.keys.contains(name))
-            }
-        }
+extension CompoundAnalyticsEngineTests {
+    func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> CompoundAnalyticsEngine {
+        let mock1 = MockAnalyticsEngine()
+        let mock2 = MockAnalyticsEngine()
+        let sut = CompoundAnalyticsEngine(engines: [mock1, mock2])
+        trackForMemoryLeak(mock1, file: file, line: line)
+        trackForMemoryLeak(mock2, file: file, line: line)
+        trackForMemoryLeak(sut, file: file, line: line)
+        return sut
     }
 }

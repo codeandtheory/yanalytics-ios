@@ -30,7 +30,7 @@ struct MockAnalyticsData {
         ("signOut", ["isManual": true])
     ]
     
-    lazy private(set) var allEvents: [AnalyticsEvent] = {
+    var allEvents: [AnalyticsEvent] {
         var allEvents: [AnalyticsEvent] = []
         screens.forEach {
             allEvents.append(.screenView(screenName: $0))
@@ -45,5 +45,5 @@ struct MockAnalyticsData {
         }
         
         return allEvents
-    }()
+    }
 }

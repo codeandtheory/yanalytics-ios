@@ -4,7 +4,6 @@ disabled_rules: # rule identifiers turned on by default to exclude from running
   - multiple_closures_with_trailing_closure
 
 opt_in_rules: # some rules are turned off by default, so you need to opt-in
-  - anyobject_protocol
   - contains_over_first_not_nil
   - empty_count
   - first_where

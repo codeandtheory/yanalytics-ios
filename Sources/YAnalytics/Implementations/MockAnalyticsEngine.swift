@@ -22,6 +22,9 @@ final public class MockAnalyticsEngine {
     public private(set) var userProperties: [String: String] = [:]
     /// Dictionary of event metadata tracked in `.event` events
     public private(set) var events: [String: Metadata?] = [:]
+
+    /// Initialize mock analytics engine
+    public init() { }
 }
 
 // MARK: - AnalyticsEngine
